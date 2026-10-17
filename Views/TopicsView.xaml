@@ -1,0 +1,698 @@
+<UserControl x:Class="WebLab.RTR.Views.TopicsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WebLab.RTR.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:TopicsViewModel}"
+             Background="Transparent">
+
+    <Grid Margin="36,20,36,24">
+        <Grid.RowDefinitions>
+            <!-- 0. Header (Back button, Title, Search & Sort) -->
+            <RowDefinition Height="Auto" />
+            <!-- 1. Category Filter Tabs & Stats -->
+            <RowDefinition Height="Auto" />
+            <!-- 2. Main Content (Loading, Error, Grid of Cards, or Empty) -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ============================================== -->
+        <!-- ROW 0: NAV & HEADER CONTROLS                   -->
+        <!-- ============================================== -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Back to Home Button & Section Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding NavigateBackCommand}"
+                        Width="44" Height="44"
+                        Margin="0,0,16,0"
+                        Background="{StaticResource BrushSurface}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1.5"
+                        Cursor="Hand"
+                        FocusVisualStyle="{x:Null}">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="12"
+                                    Effect="{StaticResource SoftCardShadow}">
+                                <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Stroke="{StaticResource BrushTextPrimary}"
+                                      StrokeThickness="2"
+                                      Data="M 14,7 L 7,14 L 14,21 M 7,14 L 21,14" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{StaticResource BrushLightBlue}" />
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="#93C5FD" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Mavzular katalogi"
+                                   FontSize="26"
+                                   FontWeight="ExtraBold"
+                                   Foreground="{StaticResource BrushTextPrimary}" />
+                        <Border Background="{StaticResource BrushLightBlue}"
+                                BorderBrush="#BFDBFE"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="8,2"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding FilteredTopics.Count, StringFormat='{}{0} ta mavzu'}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushPrimary}" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="«Veb dasturlash va dizayn» fanining to‘liq nazariy va amaliy darslar to‘plami"
+                               FontSize="13.5"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,2,0,0" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Search Box & Sort Selection (Right) -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                <!-- Search Box -->
+                <Border Width="280" Height="44"
+                        Background="{StaticResource BrushSurface}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1.5"
+                        CornerRadius="12"
+                        Margin="0,0,16,0"
+                        Effect="{StaticResource SoftCardShadow}">
+                    <Grid Margin="12,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Search Icon -->
+                        <Path Grid.Column="0"
+                              Fill="{StaticResource BrushTextSecondary}"
+                              VerticalAlignment="Center"
+                              Margin="0,0,8,0"
+                              Data="M 15.5,14 H 14.71 L 14.43,13.73 C 15.41,12.59 16,11.11 16,9.5 C 16,5.91 13.09,3 9.5,3 C 5.91,3 3,5.91 3,9.5 C 3,13.09 5.91,16 9.5,16 C 11.11,16 12.59,15.41 13.73,14.43 L 14,14.71 V 15.5 L 19,20.49 L 20.49,19 L 15.5,14 Z M 9.5,14 C 7.01,14 5,11.99 5,9.5 C 5,7.01 7.01,5 9.5,5 C 11.99,5 14,7.01 14,9.5 C 14,11.99 11.99,14 9.5,14 Z" />
+
+                        <TextBox Grid.Column="1"
+                                 Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                                 VerticalAlignment="Center"
+                                 BorderThickness="0"
+                                 Background="Transparent"
+                                 FontSize="13.5"
+                                 Foreground="{StaticResource BrushTextPrimary}"
+                                 FocusVisualStyle="{x:Null}" />
+                        
+                        <!-- Placeholder text -->
+                        <TextBlock Grid.Column="1"
+                                   Text="Mavzulardan qidirish..."
+                                   VerticalAlignment="Center"
+                                   Foreground="#94A3B8"
+                                   FontSize="13.5"
+                                   IsHitTestVisible="False">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SearchQuery}" Value="">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Grid>
+                </Border>
+
+                <!-- Sort Control Panel -->
+                <Border Height="44"
+                        Background="{StaticResource BrushSurface}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1.5"
+                        CornerRadius="12"
+                        Padding="4"
+                        Effect="{StaticResource SoftCardShadow}">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Command="{Binding SetSortCommand}" CommandParameter="Order"
+                                Content="№ Tartib"
+                                Height="34" Padding="12,0"
+                                Cursor="Hand" BorderThickness="0"
+                                FontSize="12.5" FontWeight="SemiBold"
+                                Background="Transparent" Foreground="{StaticResource BrushTextSecondary}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedSortOption}" Value="OrderNumber">
+                                            <Setter Property="Background" Value="{StaticResource BrushPrimary}" />
+                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Command="{Binding SetSortCommand}" CommandParameter="Title"
+                                Content="Alifbo"
+                                Height="34" Padding="12,0"
+                                Cursor="Hand" BorderThickness="0"
+                                FontSize="12.5" FontWeight="SemiBold"
+                                Background="Transparent" Foreground="{StaticResource BrushTextSecondary}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedSortOption}" Value="Title">
+                                            <Setter Property="Background" Value="{StaticResource BrushPrimary}" />
+                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+
+                        <Button Command="{Binding SetSortCommand}" CommandParameter="Duration"
+                                Content="⏱ Vaqt"
+                                Height="34" Padding="12,0"
+                                Cursor="Hand" BorderThickness="0"
+                                FontSize="12.5" FontWeight="SemiBold"
+                                Background="Transparent" Foreground="{StaticResource BrushTextSecondary}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedSortOption}" Value="Duration">
+                                            <Setter Property="Background" Value="{StaticResource BrushPrimary}" />
+                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+
+        <!-- ============================================== -->
+        <!-- ROW 1: CATEGORY FILTER TABS                    -->
+        <!-- ============================================== -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,20">
+            <!-- Barchasi Tab -->
+            <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Barchasi"
+                    Height="38" Padding="18,0" Margin="0,0,10,0"
+                    Cursor="Hand" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold"
+                    Background="{StaticResource BrushSurface}" Foreground="{StaticResource BrushTextSecondary}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedCategory}" Value="Barchasi">
+                                <Setter Property="Background" Value="{StaticResource BrushNavy}" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.2" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Barchasi" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding AllCount, StringFormat=' ({0})'}" Opacity="0.8" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- HTML Tab -->
+            <Button Command="{Binding SelectCategoryCommand}" CommandParameter="HTML"
+                    Height="38" Padding="18,0" Margin="0,0,10,0"
+                    Cursor="Hand" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold"
+                    Background="{StaticResource BrushSurface}" Foreground="{StaticResource BrushTextSecondary}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedCategory}" Value="HTML">
+                                <Setter Property="Background" Value="#EA580C" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.2" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="HTML &amp; Veb" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding HtmlCount, StringFormat=' ({0})'}" Opacity="0.8" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- CSS Tab -->
+            <Button Command="{Binding SelectCategoryCommand}" CommandParameter="CSS"
+                    Height="38" Padding="18,0" Margin="0,0,10,0"
+                    Cursor="Hand" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold"
+                    Background="{StaticResource BrushSurface}" Foreground="{StaticResource BrushTextSecondary}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedCategory}" Value="CSS">
+                                <Setter Property="Background" Value="{StaticResource BrushPrimary}" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.2" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="CSS &amp; Dizayn" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding CssCount, StringFormat=' ({0})'}" Opacity="0.8" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- JavaScript Tab -->
+            <Button Command="{Binding SelectCategoryCommand}" CommandParameter="JavaScript"
+                    Height="38" Padding="18,0" Margin="0,0,10,0"
+                    Cursor="Hand" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold"
+                    Background="{StaticResource BrushSurface}" Foreground="{StaticResource BrushTextSecondary}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedCategory}" Value="JavaScript">
+                                <Setter Property="Background" Value="#CA8A04" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.2" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="JavaScript" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding JsCount, StringFormat=' ({0})'}" Opacity="0.8" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+
+            <!-- Dizayn Tab -->
+            <Button Command="{Binding SelectCategoryCommand}" CommandParameter="Dizayn"
+                    Height="38" Padding="18,0"
+                    Cursor="Hand" BorderThickness="0"
+                    FontSize="13" FontWeight="SemiBold"
+                    Background="{StaticResource BrushSurface}" Foreground="{StaticResource BrushTextSecondary}">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SelectedCategory}" Value="Dizayn">
+                                <Setter Property="Background" Value="{StaticResource BrushAccentPurple}" />
+                                <Setter Property="Foreground" Value="#FFFFFF" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.2" CornerRadius="10" Padding="{TemplateBinding Padding}">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="UI/UX &amp; Amaliyot" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding DesignCount, StringFormat=' ({0})'}" Opacity="0.8" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+
+        <!-- ============================================== -->
+        <!-- ROW 2: TOPICS LIST & STATES                    -->
+        <!-- ============================================== -->
+        <Grid Grid.Row="2">
+            <!-- 1. Loading State -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisConverter}}">
+                <ProgressBar IsIndeterminate="True" Width="200" Height="6" Margin="0,0,0,16" Foreground="{StaticResource BrushPrimary}" />
+                <TextBlock Text="Mavzular bazadan yuklanmoqda..."
+                           FontSize="14"
+                           FontWeight="Medium"
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- 2. Error State -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" MaxWidth="440"
+                        Visibility="{Binding HasError, Converter={StaticResource BoolToVisConverter}}">
+                <Border Width="48" Height="48" CornerRadius="24" Background="#FEE2E2" HorizontalAlignment="Center" Margin="0,0,0,12">
+                    <TextBlock Text="⚠" FontSize="20" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#DC2626" />
+                </Border>
+                <TextBlock Text="{Binding ErrorMessage}"
+                           TextWrapping="Wrap"
+                           TextAlignment="Center"
+                           FontSize="14"
+                           Foreground="#DC2626"
+                           Margin="0,0,0,16" />
+                <Button Content="Qayta urinish"
+                        Command="{Binding LoadTopicsCommand}"
+                        Style="{StaticResource PrimaryHeroButtonStyle}"
+                        Height="42" Padding="20,0"
+                        HorizontalAlignment="Center" />
+            </StackPanel>
+
+            <!-- 3. Empty Search State -->
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Visibility="{Binding HasNoTopics, Converter={StaticResource BoolToVisConverter}}">
+                <TextBlock Text="🔍" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,12" />
+                <TextBlock Text="Mavzular topilmadi"
+                           FontSize="18"
+                           FontWeight="Bold"
+                           Foreground="{StaticResource BrushTextPrimary}"
+                           HorizontalAlignment="Center" />
+                <TextBlock Text="Qidiruv so‘zini o‘zgartiring yoki filtrni qayta tiklang."
+                           FontSize="13.5"
+                           Foreground="{StaticResource BrushTextSecondary}"
+                           HorizontalAlignment="Center"
+                           Margin="0,4,0,0" />
+            </StackPanel>
+
+            <!-- 4. Real Scrollable Cards Grid -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+                <ItemsControl ItemsSource="{Binding FilteredTopics}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <!-- Card Container -->
+                            <Border Width="380" Height="220"
+                                    Margin="0,0,20,20"
+                                    Background="{StaticResource BrushSurface}"
+                                    BorderBrush="{StaticResource BrushBorder}"
+                                    BorderThickness="1.5"
+                                    CornerRadius="16"
+                                    Effect="{StaticResource SoftCardShadow}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="BorderBrush" Value="#93C5FD" />
+                                                <Setter Property="Effect" Value="{StaticResource FloatingShadow}" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+
+                                <Grid Margin="20,18">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+
+                                    <!-- Top Row: Order Badge & Category Tag -->
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <!-- Order Badge -->
+                                        <Border Grid.Column="0"
+                                                Background="{StaticResource BrushLightBlue}"
+                                                CornerRadius="8"
+                                                Padding="9,4">
+                                            <TextBlock Text="{Binding OrderNumber, StringFormat='№ {0}'}"
+                                                       FontSize="11.5"
+                                                       FontWeight="Bold"
+                                                       Foreground="{StaticResource BrushPrimary}" />
+                                        </Border>
+
+                                        <!-- Category Tag -->
+                                        <Border Grid.Column="2"
+                                                Background="#F1F5F9"
+                                                CornerRadius="6"
+                                                Padding="8,3">
+                                            <TextBlock Text="{Binding Category}"
+                                                       FontSize="11"
+                                                       FontWeight="SemiBold"
+                                                       Foreground="#475569" />
+                                        </Border>
+                                    </Grid>
+
+                                    <!-- Middle Row: Title & Short Description -->
+                                    <StackPanel Grid.Row="1" Margin="0,12,0,8" VerticalAlignment="Top">
+                                        <TextBlock Text="{Binding Title}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Foreground="{StaticResource BrushTextPrimary}"
+                                                   TextWrapping="Wrap"
+                                                   MaxHeight="48"
+                                                   TextTrimming="CharacterEllipsis"
+                                                   LineHeight="22"
+                                                   Margin="0,0,0,6" />
+                                        <TextBlock Text="{Binding Description}"
+                                                   FontSize="12.5"
+                                                   LineHeight="18"
+                                                   Foreground="{StaticResource BrushTextSecondary}"
+                                                   TextWrapping="Wrap"
+                                                   MaxHeight="54"
+                                                   TextTrimming="CharacterEllipsis" />
+                                    </StackPanel>
+
+                                    <!-- Bottom Row: Meta & Action Button -->
+                                    <Grid Grid.Row="2">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding DurationMinutes, StringFormat='⏱ {0} daqiqa'}"
+                                                       FontSize="12"
+                                                       FontWeight="Medium"
+                                                       Foreground="#64748B"
+                                                       Margin="0,0,12,0" />
+                                            <TextBlock Text="{Binding Level}"
+                                                       FontSize="11.5"
+                                                       Foreground="#94A3B8" />
+                                        </StackPanel>
+
+                                        <!-- Open Topic Button -->
+                                        <Button Grid.Column="1"
+                                                Command="{Binding DataContext.OpenTopicDetailCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"
+                                                Content="Batafsil →"
+                                                Height="32" Padding="14,0"
+                                                Background="{StaticResource BrushLightBlue}"
+                                                Foreground="{StaticResource BrushPrimary}"
+                                                BorderThickness="0"
+                                                FontSize="12.5"
+                                                FontWeight="SemiBold"
+                                                Cursor="Hand"
+                                                FocusVisualStyle="{x:Null}">
+                                            <Button.Template>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="btnBd" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+                                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="btnBd" Property="Background" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter Property="Foreground" Value="#FFFFFF" />
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Button.Template>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <!-- ============================================== -->
+        <!-- TOPIC DETAIL MODAL DIALOG                      -->
+        <!-- ============================================== -->
+        <Grid Grid.RowSpan="3"
+              Margin="-36,-20,-36,-24"
+              Background="#60000000"
+              Visibility="{Binding IsDetailModalOpen, Converter={StaticResource BoolToVisConverter}}"
+              Panel.ZIndex="100">
+            <Border Width="560"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="1.5"
+                    CornerRadius="20"
+                    Effect="{StaticResource FloatingShadow}"
+                    Padding="32">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <!-- Top Meta Header -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Title & Category -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Description -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Notice / Future Phase Placeholder -->
+                        <RowDefinition Height="Auto" />
+                        <!-- Bottom Action Button -->
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Top Bar: Order & Close button -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <Border Background="{StaticResource BrushLightBlue}" CornerRadius="6" Padding="8,4" Margin="0,0,8,0">
+                                <TextBlock Text="{Binding SelectedTopic.OrderNumber, StringFormat='Mavzu № {0}'}"
+                                           FontWeight="Bold" FontSize="12" Foreground="{StaticResource BrushPrimary}" />
+                            </Border>
+                            <Border Background="#F1F5F9" CornerRadius="6" Padding="8,4">
+                                <TextBlock Text="{Binding SelectedTopic.Category}"
+                                           FontWeight="SemiBold" FontSize="12" Foreground="#475569" />
+                            </Border>
+                        </StackPanel>
+
+                        <!-- Close Button -->
+                        <Button HorizontalAlignment="Right"
+                                Command="{Binding CloseTopicDetailCommand}"
+                                Content="✕"
+                                Width="34" Height="34"
+                                Background="#F1F5F9"
+                                Foreground="{StaticResource BrushTextSecondary}"
+                                BorderThickness="0"
+                                Cursor="Hand"
+                                FontSize="14"
+                                FontWeight="Bold"
+                                FocusVisualStyle="{x:Null}">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="17">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
+                        </Button>
+                    </Grid>
+
+                    <!-- Title -->
+                    <TextBlock Grid.Row="1"
+                               Text="{Binding SelectedTopic.Title}"
+                               FontSize="22"
+                               FontWeight="ExtraBold"
+                               Foreground="{StaticResource BrushTextPrimary}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,14" />
+
+                    <!-- Description & Duration -->
+                    <StackPanel Grid.Row="2" Margin="0,0,0,20">
+                        <TextBlock Text="Mavzu haqida qisqacha:"
+                                   FontSize="13"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource BrushNavy}"
+                                   Margin="0,0,0,6" />
+                        <TextBlock Text="{Binding SelectedTopic.Description}"
+                                   FontSize="14.5"
+                                   LineHeight="22"
+                                   Foreground="{StaticResource BrushTextSecondary}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,12" />
+
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{Binding SelectedTopic.DurationMinutes, StringFormat='⏱ Tavsiya etilgan o‘rganish vaqti: {0} daqiqa'}"
+                                       FontSize="13"
+                                       FontWeight="Medium"
+                                       Foreground="{StaticResource BrushPrimary}"
+                                       Margin="0,0,16,0" />
+                            <TextBlock Text="{Binding SelectedTopic.Level, StringFormat='• Daraja: {0}'}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource BrushTextSecondary}" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Notice banner -->
+                    <Border Grid.Row="3"
+                            Background="{StaticResource BrushLightBlue}"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1"
+                            CornerRadius="12"
+                            Padding="16,12"
+                            Margin="0,0,0,24">
+                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                            <TextBlock Text="💡" FontSize="18" Margin="0,0,12,0" VerticalAlignment="Center" />
+                            <TextBlock Text="Ushbu darsning to‘liq interaktiv matni, video qo‘llanmasi, amaliy mashg‘ulotlari va test savollari keyingi bosqichda qo‘shiladi."
+                                       FontSize="12.5"
+                                       LineHeight="18"
+                                       Foreground="{StaticResource BrushNavy}"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="420" />
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Bottom Close Action -->
+                    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Yopish"
+                                Command="{Binding CloseTopicDetailCommand}"
+                                Style="{StaticResource PrimaryHeroButtonStyle}"
+                                Height="44" Padding="24,0"
+                                FontSize="14" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

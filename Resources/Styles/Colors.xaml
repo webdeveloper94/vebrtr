@@ -1,0 +1,80 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- Primary Palette: Premium Light -->
+    <Color x:Key="ColorBackground">#F6F8FC</Color>
+    <Color x:Key="ColorSurface">#FFFFFF</Color>
+    <Color x:Key="ColorPrimary">#2563EB</Color>
+    <Color x:Key="ColorPrimaryHover">#1D4ED8</Color>
+    <Color x:Key="ColorPrimaryActive">#1E40AF</Color>
+    <Color x:Key="ColorNavy">#14213D</Color>
+    <Color x:Key="ColorTextPrimary">#172033</Color>
+    <Color x:Key="ColorTextSecondary">#64748B</Color>
+    <Color x:Key="ColorBorder">#E5EAF2</Color>
+    <Color x:Key="ColorBorderLight">#F1F5F9</Color>
+    <Color x:Key="ColorLightBlue">#EEF4FF</Color>
+    <Color x:Key="ColorAccentCyan">#06B6D4</Color>
+    <Color x:Key="ColorAccentPurple">#8B5CF6</Color>
+    <Color x:Key="ColorAccentAmber">#F59E0B</Color>
+    <Color x:Key="ColorAccentEmerald">#10B981</Color>
+
+    <!-- Solid Color Brushes -->
+    <SolidColorBrush x:Key="BrushBackground" Color="{StaticResource ColorBackground}" />
+    <SolidColorBrush x:Key="BrushSurface" Color="{StaticResource ColorSurface}" />
+    <SolidColorBrush x:Key="BrushPrimary" Color="{StaticResource ColorPrimary}" />
+    <SolidColorBrush x:Key="BrushPrimaryHover" Color="{StaticResource ColorPrimaryHover}" />
+    <SolidColorBrush x:Key="BrushPrimaryActive" Color="{StaticResource ColorPrimaryActive}" />
+    <SolidColorBrush x:Key="BrushNavy" Color="{StaticResource ColorNavy}" />
+    <SolidColorBrush x:Key="BrushTextPrimary" Color="{StaticResource ColorTextPrimary}" />
+    <SolidColorBrush x:Key="BrushTextSecondary" Color="{StaticResource ColorTextSecondary}" />
+    <SolidColorBrush x:Key="BrushBorder" Color="{StaticResource ColorBorder}" />
+    <SolidColorBrush x:Key="BrushBorderLight" Color="{StaticResource ColorBorderLight}" />
+    <SolidColorBrush x:Key="BrushLightBlue" Color="{StaticResource ColorLightBlue}" />
+    <SolidColorBrush x:Key="BrushAccentCyan" Color="{StaticResource ColorAccentCyan}" />
+    <SolidColorBrush x:Key="BrushAccentPurple" Color="{StaticResource ColorAccentPurple}" />
+    <SolidColorBrush x:Key="BrushAccentAmber" Color="{StaticResource ColorAccentAmber}" />
+    <SolidColorBrush x:Key="BrushAccentEmerald" Color="{StaticResource ColorAccentEmerald}" />
+
+    <!-- Gradient Brushes -->
+    <LinearGradientBrush x:Key="BrushHeroGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFFFFF" Offset="0" />
+        <GradientStop Color="#F3F7FF" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrushPrimaryGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#2563EB" Offset="0" />
+        <GradientStop Color="#1D4ED8" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- 3D Realistic Sphere Shading -->
+    <RadialGradientBrush x:Key="BrushSphere3D" Center="0.32,0.3" GradientOrigin="0.32,0.3" RadiusX="0.68" RadiusY="0.68">
+        <GradientStop Color="#93C5FD" Offset="0" />
+        <GradientStop Color="#3B82F6" Offset="0.35" />
+        <GradientStop Color="#1D4ED8" Offset="0.75" />
+        <GradientStop Color="#0F172A" Offset="1" />
+    </RadialGradientBrush>
+
+    <!-- Glassmorphic Translucent Brushes -->
+    <LinearGradientBrush x:Key="BrushGlassSurface" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#F0FFFFFF" Offset="0" />
+        <GradientStop Color="#C8F1F5F9" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrushGlassBorder" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#FFFFFFFF" Offset="0" />
+        <GradientStop Color="#6093C5FD" Offset="1" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="BrushCodeEditorHeader" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#0F172A" Offset="0" />
+        <GradientStop Color="#1E293B" Offset="1" />
+    </LinearGradientBrush>
+
+    <!-- Optimized Hardware-Friendly Shadows (Render-performant blur radii) -->
+    <DropShadowEffect x:Key="SoftCardShadow" BlurRadius="16" Direction="270" ShadowDepth="3" Color="#1E293B" Opacity="0.06" RenderingBias="Performance" />
+    <DropShadowEffect x:Key="FloatingShadow" BlurRadius="22" Direction="270" ShadowDepth="6" Color="#0F172A" Opacity="0.09" RenderingBias="Performance" />
+    <DropShadowEffect x:Key="Deep3DShadow" BlurRadius="28" Direction="270" ShadowDepth="10" Color="#0F172A" Opacity="0.13" RenderingBias="Performance" />
+    <DropShadowEffect x:Key="PrimaryGlowShadow" BlurRadius="16" Direction="270" ShadowDepth="4" Color="#2563EB" Opacity="0.28" RenderingBias="Performance" />
+    <DropShadowEffect x:Key="SphereGlowShadow" BlurRadius="20" Direction="270" ShadowDepth="8" Color="#1D4ED8" Opacity="0.32" RenderingBias="Performance" />
+
+</ResourceDictionary>
