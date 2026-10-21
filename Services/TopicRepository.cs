@@ -33,9 +33,59 @@ public class TopicRepository : ITopicRepository
         await using var db = new AppDbContext();
         await db.Database.EnsureCreatedAsync();
 
+        // Schema auto-migration for newly added RTR columns
+        try
+        {
+            var columnsSql = new[]
+            {
+                "ALTER TABLE Topics ADD COLUMN LectureContent TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN PracticalTasks TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN TeachingMethods TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN VideoUrl TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN VideoDuration TEXT DEFAULT '15:00';",
+                "ALTER TABLE Topics ADD COLUMN VideoQuality TEXT DEFAULT '1080p Full HD';",
+                "ALTER TABLE Topics ADD COLUMN PresentationFile TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN PresentationSlideCount INTEGER DEFAULT 15;",
+                "ALTER TABLE Topics ADD COLUMN ReviewQuestions TEXT DEFAULT '';",
+                "ALTER TABLE Topics ADD COLUMN GlossaryTerms TEXT DEFAULT '';"
+            };
+
+            foreach (var sql in columnsSql)
+            {
+                try
+                {
+                    await db.Database.ExecuteSqlRawAsync(sql);
+                }
+                catch
+                {
+                    // Column already exists, ignore
+                }
+            }
+        }
+        catch
+        {
+            // Ignore migration check
+        }
+
         if (await db.Topics.AnyAsync())
         {
-            return; // 30 ta mavzu allaqachon mavjud, takroran kiritilmaydi
+            var first = await db.Topics.FirstAsync();
+            if (string.IsNullOrEmpty(first.GlossaryTerms))
+            {
+                var topics = await db.Topics.ToListAsync();
+                foreach (var t in topics)
+                {
+                    if (string.IsNullOrEmpty(t.GlossaryTerms))
+                    {
+                        t.GlossaryTerms = $"• {t.Category} (Asosiy tushuncha): Mazkur yo‘nalishdagi standartlar va me’yoriy qoidalar to‘plami.\n\n" +
+                                          $"• Sintaksis: Kod va direktivalarni to‘g‘ri yozish qoidalari majmuasi.\n\n" +
+                                          $"• Standart (W3C): Internet hamjamiyati tomonidan tasdiqlangan umumiy talablar.\n\n" +
+                                          $"• Optimal yechim: Resurslardan kamroq foydalanib, yuqori tezlik va sifatga erishish usuli.";
+                    }
+                }
+                await db.SaveChangesAsync();
+            }
+            return;
         }
 
         var initialTopics = new List<Topic>

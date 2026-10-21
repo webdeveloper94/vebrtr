@@ -1,0 +1,174 @@
+<UserControl x:Class="WebLab.RTR.Views.GlossaryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:WebLab.RTR.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:GlossaryViewModel}"
+             Background="Transparent">
+
+    <Grid Margin="36,20,36,24">
+        <Grid.RowDefinitions>
+            <!-- 0: Header & Search -->
+            <RowDefinition Height="Auto" />
+            <!-- 1: Category Filter Tabs -->
+            <RowDefinition Height="Auto" />
+            <!-- 2: Terms List -->
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- ROW 0: HEADER & CONTROLS -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Back Button & Title -->
+            <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button Command="{Binding BackToHomeCommand}"
+                        Width="44" Height="44"
+                        Margin="0,0,16,0"
+                        Background="{StaticResource BrushSurface}"
+                        BorderBrush="{StaticResource BrushBorder}"
+                        BorderThickness="1.5"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="bd" Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="12"
+                                    Effect="{StaticResource SoftCardShadow}">
+                                <Path HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      Stroke="{StaticResource BrushTextPrimary}"
+                                      StrokeThickness="2"
+                                      Data="M 14,7 L 7,14 L 14,21 M 7,14 L 21,14" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="bd" Property="Background" Value="{StaticResource BrushLightBlue}" />
+                                    <Setter TargetName="bd" Property="BorderBrush" Value="#93C5FD" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <StackPanel VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Glossariy — Atamalar lug‘ati"
+                                   FontSize="26"
+                                   FontWeight="ExtraBold"
+                                   Foreground="{StaticResource BrushTextPrimary}" />
+                        <Border Background="{StaticResource BrushLightBlue}"
+                                BorderBrush="#BFDBFE"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Padding="8,2"
+                                Margin="12,0,0,0"
+                                VerticalAlignment="Center">
+                            <TextBlock Text="{Binding FilteredGlossary.Count, StringFormat='{}{0} ta atama'}"
+                                       FontSize="12"
+                                       FontWeight="SemiBold"
+                                       Foreground="{StaticResource BrushPrimary}" />
+                        </Border>
+                    </StackPanel>
+                    <TextBlock Text="«Veb dasturlash va dizayn» kursi bo‘yicha sohaviy tushunchalar, atamalar va ularning to‘liq izohlari"
+                               FontSize="13.5"
+                               Foreground="{StaticResource BrushTextSecondary}"
+                               Margin="0,2,0,0" />
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Search Box -->
+            <Border Grid.Column="2" Width="300" Height="44"
+                    Background="{StaticResource BrushSurface}"
+                    BorderBrush="{StaticResource BrushBorder}"
+                    BorderThickness="1.5"
+                    CornerRadius="12"
+                    Effect="{StaticResource SoftCardShadow}">
+                <Grid Margin="12,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Path Grid.Column="0"
+                          VerticalAlignment="Center"
+                          Stroke="{StaticResource BrushTextSecondary}"
+                          StrokeThickness="1.8"
+                          Width="16" Height="16"
+                          Margin="0,0,8,0"
+                          Data="M 6.5,11 C 9,11 11,9 11,6.5 C 11,4 9,2 6.5,2 C 4,2 2,4 2,6.5 C 2,9 4,11 6.5,11 Z M 10,10 L 14,14" />
+                    <TextBox Grid.Column="1"
+                             Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
+                             Background="Transparent"
+                             BorderThickness="0"
+                             VerticalContentAlignment="Center"
+                             FontSize="13.5"
+                             Foreground="{StaticResource BrushTextPrimary}" />
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- ROW 1: CATEGORY TABS -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,16">
+            <Button Command="{Binding FilterByCategoryCommand}" CommandParameter="Barchasi"
+                    Content="Barchasi" Margin="0,0,8,0" Height="36" Padding="14,0"
+                    Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.5"
+                    FontWeight="SemiBold" Cursor="Hand" />
+            <Button Command="{Binding FilterByCategoryCommand}" CommandParameter="HTML"
+                    Content="HTML" Margin="0,0,8,0" Height="36" Padding="14,0"
+                    Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.5"
+                    FontWeight="SemiBold" Cursor="Hand" />
+            <Button Command="{Binding FilterByCategoryCommand}" CommandParameter="CSS"
+                    Content="CSS" Margin="0,0,8,0" Height="36" Padding="14,0"
+                    Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.5"
+                    FontWeight="SemiBold" Cursor="Hand" />
+            <Button Command="{Binding FilterByCategoryCommand}" CommandParameter="JavaScript"
+                    Content="JavaScript" Margin="0,0,8,0" Height="36" Padding="14,0"
+                    Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.5"
+                    FontWeight="SemiBold" Cursor="Hand" />
+            <Button Command="{Binding FilterByCategoryCommand}" CommandParameter="Dizayn"
+                    Content="UI/UX Dizayn" Margin="0,0,8,0" Height="36" Padding="14,0"
+                    Background="{StaticResource BrushSurface}" BorderBrush="{StaticResource BrushBorder}" BorderThickness="1.5"
+                    FontWeight="SemiBold" Cursor="Hand" />
+        </StackPanel>
+
+        <!-- ROW 2: TERMS LIST -->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+            <ItemsControl ItemsSource="{Binding FilteredGlossary}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{StaticResource BrushSurface}"
+                                BorderBrush="{StaticResource BrushBorder}"
+                                BorderThickness="1.5"
+                                CornerRadius="14"
+                                Padding="20"
+                                Margin="0,0,0,14"
+                                Effect="{StaticResource SoftCardShadow}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{Binding Term}" FontSize="18" FontWeight="Bold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,0,0,6" />
+                                    <TextBlock Text="{Binding Definition}" FontSize="14.5" Foreground="#334155" TextWrapping="Wrap" LineHeight="22" Margin="0,0,0,8" />
+                                    <TextBlock Text="{Binding Example, StringFormat='{}Misol: {0}'}" FontSize="13" FontFamily="Consolas, Cascadia Code" Foreground="{StaticResource BrushPrimary}" />
+                                </StackPanel>
+
+                                <Border Grid.Column="1" Background="{StaticResource BrushLightBlue}" CornerRadius="8" Padding="10,4" VerticalAlignment="Top" Margin="16,0,0,0">
+                                    <TextBlock Text="{Binding Category}" FontSize="12" FontWeight="Bold" Foreground="{StaticResource BrushPrimary}" />
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

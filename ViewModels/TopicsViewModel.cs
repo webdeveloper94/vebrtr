@@ -162,7 +162,7 @@ public partial class TopicsViewModel : ObservableObject
     private void OpenTopicDetail(Topic topic)
     {
         SelectedTopic = topic;
-        IsDetailModalOpen = true;
+        _navigationService.NavigateToTopicDetail(topic.Id);
     }
 
     [RelayCommand]

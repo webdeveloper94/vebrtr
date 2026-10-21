@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebLab.RTR")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+78ce97b4bb6bda3caaa0e60ed5f3dcb8c63b0be9")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebLab.RTR")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebLab.RTR")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

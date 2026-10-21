@@ -18,6 +18,15 @@ public partial class MainViewModel : ObservableObject
     private TopicsViewModel _topicsVM;
 
     [ObservableProperty]
+    private TopicDetailViewModel _topicDetailVM;
+
+    [ObservableProperty]
+    private GlossaryViewModel _glossaryVM;
+
+    [ObservableProperty]
+    private PassportViewModel _passportVM;
+
+    [ObservableProperty]
     private string _notificationMessage = string.Empty;
 
     [ObservableProperty]
@@ -36,6 +45,9 @@ public partial class MainViewModel : ObservableObject
         _topicService = topicService;
 
         _topicsVM = new TopicsViewModel(_topicService, _navigationService);
+        _topicDetailVM = new TopicDetailViewModel(_topicService, _navigationService);
+        _glossaryVM = new GlossaryViewModel(_navigationService);
+        _passportVM = new PassportViewModel(_navigationService);
 
         if (_navigationService is NavigationService navSvc)
         {
@@ -46,7 +58,17 @@ public partial class MainViewModel : ObservableObject
                 {
                     _ = _topicsVM.LoadTopicsAsync();
                 }
+                else if (view == AppView.Glossary)
+                {
+                    _ = _glossaryVM.LoadGlossaryAsync();
+                }
             };
+
+            navSvc.OnTopicSelected = topicId =>
+            {
+                _ = _topicDetailVM.LoadTopicAsync(topicId);
+            };
+
             navSvc.OnNotificationRequested = HandleNotificationRequest;
         }
 
@@ -57,7 +79,7 @@ public partial class MainViewModel : ObservableObject
     private void HandleNotificationRequest(string sectionTitle)
     {
         NotificationSectionTitle = sectionTitle;
-        NotificationMessage = "Bu bo‘lim keyingi ishlab chiqish bosqichida qo‘shiladi.";
+        NotificationMessage = "Bu bo‘lim ma’lumotlari tez orada to‘ldiriladi.";
         IsNotificationVisible = true;
 
         _notificationTimer?.Stop();
@@ -80,9 +102,21 @@ public partial class MainViewModel : ObservableObject
     }
 
     [RelayCommand]
+    private void NavigateToGlossary()
+    {
+        _navigationService.NavigateTo(AppView.Glossary);
+    }
+
+    [RelayCommand]
+    private void NavigateToPassport()
+    {
+        _navigationService.NavigateTo(AppView.Passport);
+    }
+
+    [RelayCommand]
     private void NavigateToAuthor()
     {
-        _navigationService.ShowUpcomingFeatureNotice("Muallif");
+        NavigateToPassport();
     }
 
     [RelayCommand]

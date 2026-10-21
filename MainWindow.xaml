@@ -33,7 +33,7 @@
     <!-- Optimized Hardware-Accelerated Entrance & Ambient Animations -->
     <Window.Resources>
         <Storyboard x:Key="EntranceStoryboard">
-            <!-- Header bar fade-in -->
+            <!-- 1. Header bar slides down from top & fades in -->
             <DoubleAnimation Storyboard.TargetName="HeaderBar"
                              Storyboard.TargetProperty="Opacity"
                              From="0" To="1" Duration="0:0:0.5">
@@ -42,33 +42,45 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
 
-            <!-- Hero Left Typography Slide & Fade -->
+            <!-- 2. Hero Left: Slides smoothly from Left (X: -40 -> 0) & Fades in -->
             <DoubleAnimation Storyboard.TargetName="HeroContentGroup"
                              Storyboard.TargetProperty="Opacity"
-                             From="0" To="1" Duration="0:0:0.7">
+                             From="0" To="1" Duration="0:0:0.75"
+                             BeginTime="0:0:0.1">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="HeroContentTransform"
-                             Storyboard.TargetProperty="Y"
-                             From="26" To="0" Duration="0:0:0.7">
+                             Storyboard.TargetProperty="X"
+                             From="-45" To="0" Duration="0:0:0.75"
+                             BeginTime="0:0:0.1">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
 
-            <!-- Hero Right 2.5D Stage Entrance -->
+            <!-- 3. Hero Right 2.5D Stage: Slides from Right (X: 50 -> 0) and up (Y: 20 -> 0) with Fade -->
             <DoubleAnimation Storyboard.TargetName="HeroVisualGroup"
                              Storyboard.TargetProperty="Opacity"
-                             From="0" To="1" Duration="0:0:0.8">
+                             From="0" To="1" Duration="0:0:0.85"
+                             BeginTime="0:0:0.2">
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+            <DoubleAnimation Storyboard.TargetName="StageTranslate"
+                             Storyboard.TargetProperty="X"
+                             From="50" To="0" Duration="0:0:0.85"
+                             BeginTime="0:0:0.2">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
             <DoubleAnimation Storyboard.TargetName="StageTranslate"
                              Storyboard.TargetProperty="Y"
-                             From="32" To="0" Duration="0:0:0.8">
+                             From="25" To="0" Duration="0:0:0.85"
+                             BeginTime="0:0:0.2">
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
                 </DoubleAnimation.EasingFunction>
@@ -241,8 +253,178 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <!-- Center Drag Area -->
-                    <Grid Grid.Column="1" Background="Transparent" />
+                    <!-- Center Navigation Menu (Segmented Pill Bar) -->
+                    <Border Grid.Column="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Background="#F1F5F9"
+                            BorderBrush="#E2E8F0"
+                            BorderThickness="1"
+                            CornerRadius="20"
+                            Padding="3"
+                            WindowChrome.IsHitTestVisibleInChrome="True">
+                        <StackPanel Orientation="Horizontal">
+                            <!-- 1. Asosiy -->
+                            <Button Command="{Binding NavigateToHomeCommand}"
+                                    Cursor="Hand" Height="34" Margin="2,0" Padding="14,0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="b" Background="Transparent" CornerRadius="16" Padding="{TemplateBinding Padding}">
+                                                        <TextBlock x:Name="t" Text="Asosiy" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="b" Property="Background" Value="#E2E8F0" />
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="Home">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- 2. Mavzular katalogi -->
+                            <Button Command="{Binding NavigateToTopicsCommand}"
+                                    Cursor="Hand" Height="34" Margin="2,0" Padding="14,0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="b" Background="Transparent" CornerRadius="16" Padding="{TemplateBinding Padding}">
+                                                        <TextBlock x:Name="t" Text="Mavzular katalogi" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="b" Property="Background" Value="#E2E8F0" />
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="Topics">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="TopicDetail">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- 3. Glossariy (Lug'at) -->
+                            <Button Command="{Binding NavigateToGlossaryCommand}"
+                                    Cursor="Hand" Height="34" Margin="2,0" Padding="14,0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="b" Background="Transparent" CornerRadius="16" Padding="{TemplateBinding Padding}">
+                                                        <TextBlock x:Name="t" Text="Glossariy (Lug‘at)" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="b" Property="Background" Value="#E2E8F0" />
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="Glossary">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <!-- 4. Modul pasporti -->
+                            <Button Command="{Binding NavigateToPassportCommand}"
+                                    Cursor="Hand" Height="34" Margin="2,0" Padding="14,0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="b" Background="Transparent" CornerRadius="16" Padding="{TemplateBinding Padding}">
+                                                        <TextBlock x:Name="t" Text="Modul pasporti" FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource BrushTextSecondary}" VerticalAlignment="Center" />
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="b" Property="Background" Value="#E2E8F0" />
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="Passport">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding CurrentView}" Value="Author">
+                                                            <Setter TargetName="b" Property="Background" Value="{StaticResource BrushSurface}" />
+                                                            <Setter TargetName="b" Property="Effect">
+                                                                <Setter.Value>
+                                                                    <DropShadowEffect BlurRadius="4" ShadowDepth="1" Opacity="0.08" Color="#000000" />
+                                                                </Setter.Value>
+                                                            </Setter>
+                                                            <Setter TargetName="t" Property="Foreground" Value="{StaticResource BrushPrimary}" />
+                                                            <Setter TargetName="t" Property="FontWeight" Value="Bold" />
+                                                        </DataTrigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </StackPanel>
+                    </Border>
 
                     <!-- Window Control Buttons (Right) -->
                     <StackPanel Grid.Column="2"
@@ -321,181 +503,119 @@
                             <TranslateTransform x:Name="HeroContentTransform" Y="0" />
                         </StackPanel.RenderTransform>
 
-                        <!-- Badge: Raqamli ta'lim resursi -->
+                        <!-- 1. Rasmiy Kasb & Yo'nalish Badge -->
                         <Border HorizontalAlignment="Left"
                                 Background="{StaticResource BrushLightBlue}"
-                                BorderBrush="#DCE7FD"
-                                BorderThickness="1"
-                                CornerRadius="8"
+                                BorderBrush="#BFDBFE"
+                                BorderThickness="1.5"
+                                CornerRadius="10"
                                 Padding="12,6"
-                                Margin="0,0,0,22">
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="7" Height="7"
-                                         Fill="{StaticResource BrushPrimary}"
-                                         Margin="0,0,8,0" />
-                                <TextBlock Text="RAQAMLI TA’LIM RESURSI"
-                                           FontSize="11.5"
-                                           FontWeight="SemiBold"
+                                Margin="0,0,0,18">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="7" Height="7" CornerRadius="3.5" Background="{StaticResource BrushPrimary}" Margin="0,0,8,0" />
+                                <TextBlock Text="30610101 — Raqamli axborotlarni qayta ishlash ustasi"
+                                           FontSize="12.5"
+                                           FontWeight="Bold"
                                            Foreground="{StaticResource BrushPrimary}" />
                             </StackPanel>
                         </Border>
 
-                        <!-- Asosiy Sarlavha: Veb dasturlash va dizayn -->
-                        <TextBlock Text="Veb dasturlash va dizayn"
-                                   FontSize="48"
+                        <!-- 2. Fan Nomi: WEB dasturlash va dizayn -->
+                        <TextBlock Text="WEB dasturlash va dizayn"
+                                   FontSize="44"
                                    FontWeight="ExtraBold"
                                    Foreground="{StaticResource BrushTextPrimary}"
                                    TextWrapping="Wrap"
-                                   LineHeight="56"
-                                   Margin="0,0,0,22" />
+                                   LineHeight="52"
+                                   Margin="0,0,0,16" />
 
-                        <!-- Tavsif Matni -->
-                        <TextBlock Text="Zamonaviy veb texnologiyalarni o‘rganing, ijodiy g‘oyalarni raqamli yechimlarga aylantiring va kelajak kasblariga tayyorlaning."
-                                   FontSize="17"
-                                   LineHeight="27"
+                        <!-- 3. Tavsif Matni -->
+                        <TextBlock Text="Zamonaviy veb texnologiyalari, HTML5, CSS3, JavaScript dasturlash hamda UI/UX dizayn asoslarini qamrab olgan to‘liq raqamli ta’lim majmuasi."
+                                   FontSize="15.5"
+                                   LineHeight="25"
                                    Foreground="{StaticResource BrushTextSecondary}"
                                    TextWrapping="Wrap"
-                                   MaxWidth="590"
+                                   MaxWidth="580"
                                    HorizontalAlignment="Left"
-                                   Margin="0,0,0,38" />
+                                   Margin="0,0,0,26" />
 
-                        <!-- C. IKKITA ASOSIY TUGMA (Mavzular & Muallif) -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,42">
-                            <!-- 1. Tugma: Mavzular -->
+                        <!-- 4. Ikkita Asosiy Boshqaruv Tugmasi -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,30">
+                            <!-- 1. Tugma: Mavzular katalogi -->
                             <Button Style="{StaticResource PrimaryHeroButtonStyle}"
                                     Command="{Binding NavigateToTopicsCommand}"
-                                    Margin="0,0,18,0">
+                                    Margin="0,0,16,0" Height="50" Padding="24,0">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <!-- Book/Catalog Vector Icon -->
-                                    <Path Margin="0,0,12,0"
-                                          Fill="#FFFFFF"
-                                          VerticalAlignment="Center"
-                                          Data="M 18,2 H 6 C 4.9,2 4,2.9 4,4 V 20 C 4,21.1 4.9,22 6,22 H 18 C 19.1,22 20,21.1 20,20 V 4 C 20,2.9 19.1,2 18,2 Z M 6,4 H 11 V 12 L 8.5,10.5 L 6,12 V 4 Z M 18,20 H 6 V 19 H 18 V 20 Z" />
-                                    <TextBlock Text="Mavzular"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center" />
-                                    <!-- Arrow forward icon -->
-                                    <Path Margin="10,1,0,0"
-                                          Fill="#FFFFFF"
-                                          Opacity="0.85"
-                                          VerticalAlignment="Center"
-                                          Data="M 5,12 H 19 M 13,6 L 19,12 L 13,18"
-                                          Stroke="#FFFFFF"
-                                          StrokeThickness="2" />
+                                    <Path Margin="0,0,10,0" Fill="#FFFFFF" VerticalAlignment="Center"
+                                          Data="M 18,2 H 6 C 4.9,2 4,2.9 4,4 V 20 C 4,21.1 4.9,22 6,22 H 18 C 19.1,22 20,21.1 20,20 V 4 C 20,2.9 19.1,2 18,2 Z M 6,4 H 11 V 12 L 8.5,10.5 L 6,12 V 4 Z" />
+                                    <TextBlock Text="Mavzular katalogi" FontSize="15" FontWeight="Bold" VerticalAlignment="Center" />
+                                    <TextBlock Text=" →" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="6,0,0,0" />
                                 </StackPanel>
                             </Button>
 
-                            <!-- 2. Tugma: Muallif -->
+                            <!-- 2. Tugma: Modul pasporti -->
                             <Button Style="{StaticResource SecondaryHeroButtonStyle}"
-                                    Command="{Binding NavigateToAuthorCommand}">
+                                    Command="{Binding NavigateToPassportCommand}"
+                                    Height="50" Padding="22,0">
                                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                    <!-- Author/User Vector Icon -->
-                                    <Path Margin="0,0,12,0"
-                                          Fill="{StaticResource BrushTextSecondary}"
-                                          VerticalAlignment="Center"
-                                          Data="M 12,12 C 14.21,12 16,10.21 16,8 C 16,5.79 14.21,4 12,4 C 9.79,4 8,5.79 8,8 C 8,10.21 9.79,12 12,12 Z M 12,14 C 9.33,14 4,15.34 4,18 V 20 H 20 V 18 C 20,15.34 14.67,14 12,14 Z" />
-                                    <TextBlock Text="Muallif"
-                                               FontSize="16"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center" />
+                                    <Path Margin="0,0,10,0" Fill="{StaticResource BrushTextSecondary}" VerticalAlignment="Center"
+                                          Data="M 19,3 H 5 C 3.9,3 3,3.9 3,5 V 19 C 3,20.1 3.9,21 5,21 H 19 C 20.1,21 21,20.1 21,19 V 5 C 21,3.9 20.1,3 19,3 Z M 19,19 H 5 V 5 H 19 V 19 Z M 7,7 H 17 V 9 H 7 Z M 7,11 H 17 V 13 H 7 Z M 7,15 H 13 V 17 H 7 Z" />
+                                    <TextBlock Text="Modul pasporti" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" />
                                 </StackPanel>
                             </Button>
                         </StackPanel>
 
-                        <!-- D. QO'SHIMCHA VIZUAL ELEMENTLAR (Pillars & Tech badges) -->
+                        <!-- 5. Rasmiy Soatlar va Ko'rsatkichlar (3 ta zamonaviy Stat Karta) -->
                         <Border BorderBrush="{StaticResource BrushBorder}"
                                 BorderThickness="0,1,0,0"
-                                Padding="0,24,0,0"
-                                MaxWidth="590"
+                                Padding="0,22,0,0"
+                                MaxWidth="580"
                                 HorizontalAlignment="Left">
-                            <Grid Width="570">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
+                            <UniformGrid Columns="3" Width="560">
+                                <!-- Karta 1: Jami soat -->
+                                <Border Background="{StaticResource BrushSurface}"
+                                        BorderBrush="{StaticResource BrushBorder}"
+                                        BorderThickness="1.5"
+                                        CornerRadius="12"
+                                        Padding="14,10"
+                                        Margin="0,0,10,0"
+                                        Effect="{StaticResource SoftCardShadow}">
+                                    <StackPanel>
+                                        <TextBlock Text="AJRATILGAN SOAT" FontSize="10.5" FontWeight="Bold" Foreground="{StaticResource BrushTextSecondary}" />
+                                        <TextBlock Text="80 soat" FontSize="20" FontWeight="ExtraBold" Foreground="{StaticResource BrushTextPrimary}" Margin="0,2,0,0" />
+                                        <TextBlock Text="Jami o‘quv yuklamasi" FontSize="11" Foreground="#64748B" />
+                                    </StackPanel>
+                                </Border>
 
-                                <!-- Pillars -->
-                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,14">
-                                    <TextBlock Text="NAZARIYA"
-                                               FontSize="12.5"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource BrushNavy}" />
-                                    <TextBlock Text=" • "
-                                               FontSize="12.5"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource BrushPrimary}"
-                                               Margin="5,0" />
-                                    <TextBlock Text="AMALIYOT"
-                                               FontSize="12.5"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource BrushNavy}" />
-                                    <TextBlock Text=" • "
-                                               FontSize="12.5"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource BrushPrimary}"
-                                               Margin="5,0" />
-                                    <TextBlock Text="IJOD"
-                                               FontSize="12.5"
-                                               FontWeight="Bold"
-                                               Foreground="{StaticResource BrushNavy}" />
-                                </StackPanel>
+                                <!-- Karta 2: Nazariy soat -->
+                                <Border Background="{StaticResource BrushSurface}"
+                                        BorderBrush="{StaticResource BrushBorder}"
+                                        BorderThickness="1.5"
+                                        CornerRadius="12"
+                                        Padding="14,10"
+                                        Margin="0,0,10,0"
+                                        Effect="{StaticResource SoftCardShadow}">
+                                    <StackPanel>
+                                        <TextBlock Text="NAZARIY" FontSize="10.5" FontWeight="Bold" Foreground="#2563EB" />
+                                        <TextBlock Text="34 soat" FontSize="20" FontWeight="ExtraBold" Foreground="#1E40AF" Margin="0,2,0,0" />
+                                        <TextBlock Text="Ma’ruza darslari" FontSize="11" Foreground="#64748B" />
+                                    </StackPanel>
+                                </Border>
 
-                                <!-- Tech Badges -->
-                                <WrapPanel Grid.Row="1" VerticalAlignment="Center">
-                                    <!-- HTML5 Badge -->
-                                    <Border Background="#FFF1EC"
-                                            BorderBrush="#FED7AA"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="9,5"
-                                            Margin="0,0,8,6">
-                                        <TextBlock Text="&lt;/&gt; HTML5"
-                                                   FontSize="11.5"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#EA580C" />
-                                    </Border>
-
-                                    <!-- CSS3 Badge -->
-                                    <Border Background="#EFF6FF"
-                                            BorderBrush="#BFDBFE"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="9,5"
-                                            Margin="0,0,8,6">
-                                        <TextBlock Text="🎨 CSS3 &amp; Grid"
-                                                   FontSize="11.5"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#2563EB" />
-                                    </Border>
-
-                                    <!-- JS Badge -->
-                                    <Border Background="#FEFCE8"
-                                            BorderBrush="#FEF08A"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="9,5"
-                                            Margin="0,0,8,6">
-                                        <TextBlock Text="⚡ JavaScript ES6+"
-                                                   FontSize="11.5"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#CA8A04" />
-                                    </Border>
-
-                                    <!-- UI/UX Badge -->
-                                    <Border Background="#FAF5FF"
-                                            BorderBrush="#E9D5FF"
-                                            BorderThickness="1"
-                                            CornerRadius="6"
-                                            Padding="9,5"
-                                            Margin="0,0,8,6">
-                                        <TextBlock Text="✨ UI/UX Dizayn"
-                                                   FontSize="11.5"
-                                                   FontWeight="SemiBold"
-                                                   Foreground="#9333EA" />
-                                    </Border>
-                                </WrapPanel>
-                            </Grid>
+                                <!-- Karta 3: Amaliy soat -->
+                                <Border Background="{StaticResource BrushSurface}"
+                                        BorderBrush="{StaticResource BrushBorder}"
+                                        BorderThickness="1.5"
+                                        CornerRadius="12"
+                                        Padding="14,10"
+                                        Effect="{StaticResource SoftCardShadow}">
+                                    <StackPanel>
+                                        <TextBlock Text="AMALIY" FontSize="10.5" FontWeight="Bold" Foreground="#059669" />
+                                        <TextBlock Text="46 soat" FontSize="20" FontWeight="ExtraBold" Foreground="#065F46" Margin="0,2,0,0" />
+                                        <TextBlock Text="Amaliy mashg‘ulot" FontSize="11" Foreground="#64748B" />
+                                    </StackPanel>
+                                </Border>
+                            </UniformGrid>
                         </Border>
                     </StackPanel>
 
@@ -990,6 +1110,75 @@
                 <ContentControl.ContentTemplate>
                     <DataTemplate DataType="{x:Type vm:TopicsViewModel}">
                         <views:TopicsView />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
+            <!-- ========================================== -->
+            <!-- C2. MAVZU BATAFSIL (TOPIC DETAIL VIEW)     -->
+            <!-- ========================================== -->
+            <ContentControl Grid.Row="1"
+                            Content="{Binding TopicDetailVM}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="TopicDetail">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:TopicDetailViewModel}">
+                        <views:TopicDetailView />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
+            <!-- ========================================== -->
+            <!-- C3. GLOSSARIY (GLOSSARY VIEW)              -->
+            <!-- ========================================== -->
+            <ContentControl Grid.Row="1"
+                            Content="{Binding GlossaryVM}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Glossary">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:GlossaryViewModel}">
+                        <views:GlossaryView />
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+
+            <!-- ========================================== -->
+            <!-- C4. PASPORT VA MUALLIF (PASSPORT VIEW)     -->
+            <!-- ========================================== -->
+            <ContentControl Grid.Row="1"
+                            Content="{Binding PassportVM}">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Passport">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CurrentView}" Value="Author">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="{x:Type vm:PassportViewModel}">
+                        <views:PassportView />
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
             </ContentControl>

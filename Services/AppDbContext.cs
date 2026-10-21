@@ -7,6 +7,8 @@ namespace WebLab.RTR.Services;
 public class AppDbContext : DbContext
 {
     public DbSet<Topic> Topics => Set<Topic>();
+    public DbSet<GlossaryItem> GlossaryItems => Set<GlossaryItem>();
+    public DbSet<QuizQuestion> QuizQuestions => Set<QuizQuestion>();
 
     public static string DatabaseFilePath
     {
@@ -50,6 +52,21 @@ public class AppDbContext : DbContext
             entity.Property(t => t.Description).HasMaxLength(1000);
             entity.HasIndex(t => t.OrderNumber);
             entity.HasIndex(t => t.Category);
+        });
+
+        modelBuilder.Entity<GlossaryItem>(entity =>
+        {
+            entity.HasKey(g => g.Id);
+            entity.Property(g => g.Term).IsRequired().HasMaxLength(150);
+            entity.Property(g => g.Category).HasMaxLength(100);
+            entity.HasIndex(g => g.Term);
+        });
+
+        modelBuilder.Entity<QuizQuestion>(entity =>
+        {
+            entity.HasKey(q => q.Id);
+            entity.Property(q => q.QuestionText).IsRequired().HasMaxLength(500);
+            entity.HasIndex(q => q.TopicId);
         });
     }
 }
